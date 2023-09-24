@@ -1,40 +1,20 @@
-import queue
+import asyncio
 import shutil
 from pathlib import Path
 
 import sounddevice as sd
-import openai, sys
+import openai
 import soundfile as sf
 
 from gtts import gTTS
 
-q = queue.Queue()
-
-
-def callback(indata, frames, time, status):
-    """This is called (from a separate thread) for each audio block."""
-    if status:
-        print(status, file=sys.stderr)
-    q.put(indata.copy())
+from recorder import Recorder
 
 
 def setup_dir(dirpath: Path):
     if dirpath.exists():
         shutil.rmtree(dirpath)
     dirpath.mkdir()
-
-
-def record(fname):
-    with sf.SoundFile(fname, mode='x', samplerate=44100, channels=2) as file:
-        print('#' * 80)
-        print("Press Enter to start recording your response.")
-        input()
-        with sd.InputStream(samplerate=44100, channels=2, callback=callback):
-            print("Now recording. Press Enter once you are done speaking.")
-            print('#' * 80)
-            input()  # Wait for the user to press Enter
-            while not q.empty():  # Continue writing any remaining data in the queue
-                file.write(q.get())
 
 
 def transcribe(fname):
@@ -59,9 +39,10 @@ messages = [{
 }]
 tmpdir = Path(".tmp/")
 tmpfile = tmpdir / "audio.wav"
+recorder = Recorder()
 while True:
     setup_dir(tmpdir)
-    record(tmpfile)
+    recorder.record(tmpfile)
     prompt = transcribe(tmpfile)
     print(f"You: {prompt}")
     print('#' * 80)
