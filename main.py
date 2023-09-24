@@ -8,6 +8,16 @@ from gtts import gTTS
 
 from recorder import Recorder
 
+# TODO: Write README and LICENSE
+# TODO: Handle long recordings (either during recording or transcription)
+#  https://platform.openai.com/docs/guides/speech-to-text/longer-inputs
+# TODO: Optimize transcriptions:
+#  https://platform.openai.com/docs/guides/speech-to-text/prompting
+#  https://platform.openai.com/docs/guides/speech-to-text/improving-reliability
+# TODO: Support adding PDFs to context
+# TODO?: Improve text to speech
+# TODO?: Generate avatars from speech (to make it as if you're talking to a person)
+
 
 def setup_dir(dirpath: Path):
     if dirpath.exists():
