@@ -1,11 +1,9 @@
-import asyncio
 import shutil
 from pathlib import Path
 
-import sounddevice as sd
 import openai
+import sounddevice as sd
 import soundfile as sf
-
 from gtts import gTTS
 
 from recorder import Recorder
