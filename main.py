@@ -9,9 +9,11 @@ from gtts import gTTS
 from recorder import Recorder
 
 # TODO: Write README and LICENSE
-# TODO: Handle long recordings (either during recording or transcription)
+# TODO?: Handle long recordings (split of new file every 30 seconds or so, launching async transcribing,
+#  before combining everything at the end)
 #  https://platform.openai.com/docs/guides/speech-to-text/longer-inputs
 # TODO: Support adding PDFs to context
+# TODO?: Streamlit
 # TODO?: Improve text to speech
 # TODO?: Generate avatars from speech (to make it as if you're talking to a person)
 
@@ -68,7 +70,7 @@ messages = [{
     "content": input()
 }]
 tmpdir = Path(".tmp/")
-tmpfile = tmpdir / "audio.wav"
+tmpfile = tmpdir / "audio.mp3"
 recorder = Recorder()
 while True:
     setup_dir(tmpdir)
