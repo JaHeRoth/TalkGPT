@@ -2,6 +2,9 @@ import openai
 
 
 class Transcriber:
+    def __init__(self, run_locally):
+        self.run_locally = run_locally
+
     def transcribe(self, fpath, messages: list[dict]):
         return self.post_process(self.initial_transcribe(fpath, messages), messages)
 

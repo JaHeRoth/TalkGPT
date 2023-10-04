@@ -7,7 +7,7 @@ import soundfile as sf
 from gtts import gTTS
 
 from recorder import Recorder
-from transcriber import transcribe, Transcriber
+from transcriber import Transcriber
 
 
 # TODO: Write README and LICENSE
@@ -44,7 +44,7 @@ messages = [{
 tmpdir = Path(".tmp/")
 tmpfile = tmpdir / "audio.mp3"
 recorder = Recorder()
-transcriber = Transcriber()
+transcriber = Transcriber(run_locally=False)
 while True:
     setup_dir(tmpdir)
     recorder.record(tmpfile)
@@ -52,6 +52,7 @@ while True:
     print(f"You: {prompt}")
     print('#' * 80)
     messages.append({"role": "user", "content": prompt})
+    # TODO: Migrate to separate class (to which we can pass run_locally)
     response = openai.ChatCompletion.create(model="gpt-4", messages=messages)["choices"][0]["message"]["content"]
     messages.append({"role": "assistant", "content": response})
     print(f"Bot: {response}")
