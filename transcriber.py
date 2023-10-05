@@ -1,11 +1,11 @@
 import openai
 
-from chat_bot import ChatBot
+from chat_bot import ChatBot, Responder
 
 
 class Transcriber:
-    def __init__(self, run_locally: bool):
-        self.run_locally = run_locally
+    def __init__(self, responder: Responder|None):
+        self.responder = responder
 
     def transcribe(self, fpath, messages: list[dict]):
         return self.post_process(self.initial_transcribe(fpath, messages), messages)
@@ -27,10 +27,11 @@ class Transcriber:
             return openai.Audio.transcribe("whisper-1", f, prompt=input_prompt, language="en")["text"]
 
     def post_process(self, raw_transcription, messages: list[dict]):
-        # Post-processing with GPT-4
+        if self.responder is None:
+            return raw_transcription
         post_processing_system = "You are a helpful assistant. Your task is to correct any spelling discrepancies in " \
                                  "the transcribed text. Only add necessary punctuation such as periods, commas, and " \
                                  "capitalization, and use only the context provided."
-        chat_bot = ChatBot(system_message=post_processing_system, run_locally=self.run_locally)
+        chat_bot = ChatBot(self.responder, system_message=post_processing_system)
         chat_bot.messages = chat_bot.messages + messages[1:]
         return chat_bot.respond(raw_transcription)

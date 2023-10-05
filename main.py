@@ -1,13 +1,14 @@
 import shutil
 from pathlib import Path
 
-from chat_bot import ChatBot
+from chat_bot import ChatBot, OpenAIResponder, HuggingFaceResponder
 from logger import Logger, Verbosity
 from recorder import Recorder
 from speaker import Speaker
 from transcriber import Transcriber
 
 
+# TODO?: Refactor (maybe LangChain can help reduce messiness)
 # TODO: Write README and LICENSE
 # TODO?: Handle long recordings (split of new file every 30 seconds or so, launching async transcribing,
 #  before combining everything at the end)
@@ -26,12 +27,13 @@ def setup_dir(dirpath: Path):
 
 tmpdir = Path(".tmp/")
 tmpfile = tmpdir / "audio.mp3"
+responder = HuggingFaceResponder()
 logger = Logger(verbosity=Verbosity.NORMAL)
 recorder = Recorder(logger)
-transcriber = Transcriber(run_locally=False)
+transcriber = Transcriber(responder=None)
 speaker = Speaker(logger)
 print("What kind of chatbot should I be? Please write your answer and press Enter:")
-bot = ChatBot(system_message=input(), run_locally=False)
+bot = ChatBot(responder, system_message=input())
 while True:
     setup_dir(tmpdir)
     recorder.record(tmpfile)
