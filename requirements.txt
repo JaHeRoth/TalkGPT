@@ -3,3 +3,5 @@ datasets
 torch
 openai
 gTTS
+sounddevice
+soundfile

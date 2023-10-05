@@ -1,14 +1,10 @@
 import shutil
 from pathlib import Path
 
-import openai
-import sounddevice as sd
-import soundfile as sf
-from gtts import gTTS
-
 from chat_bot import ChatBot
 from logger import Logger, Verbosity
 from recorder import Recorder
+from speaker import Speaker
 from transcriber import Transcriber
 
 
@@ -28,21 +24,12 @@ def setup_dir(dirpath: Path):
     dirpath.mkdir()
 
 
-def speak(text: str, fname):
-    tts = gTTS(text=text, lang='en')
-
-    tts.save(fname)
-    data, fs = sf.read(fname, dtype='float32')
-    sd.play(data, fs)
-    sd.wait()
-    logger.log("Done speaking")
-
-
 tmpdir = Path(".tmp/")
 tmpfile = tmpdir / "audio.mp3"
 logger = Logger(verbosity=Verbosity.NORMAL)
 recorder = Recorder(logger)
 transcriber = Transcriber(run_locally=False)
+speaker = Speaker(logger)
 print("What kind of chatbot should I be? Please write your answer and press Enter:")
 bot = ChatBot(system_message=input(), run_locally=False)
 while True:
@@ -52,4 +39,4 @@ while True:
     logger.priority_log(f"You: {prompt}")
     response = bot.respond(prompt)
     logger.priority_log(f"Bot: {response}")
-    speak(response, tmpfile)
+    speaker.speak(response, tmpfile)
