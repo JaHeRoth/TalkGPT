@@ -6,6 +6,7 @@ import sounddevice as sd
 import soundfile as sf
 from gtts import gTTS
 
+from chat_bot import ChatBot
 from recorder import Recorder
 from transcriber import Transcriber
 
@@ -36,24 +37,19 @@ def speak(text: str, fname):
     print("Done speaking")
 
 
-print("What kind of chatbot should I be? Please write your answer and press Enter:")
-messages = [{
-    "role": "system",
-    "content": input()
-}]
 tmpdir = Path(".tmp/")
 tmpfile = tmpdir / "audio.mp3"
 recorder = Recorder()
 transcriber = Transcriber(run_locally=False)
+print("What kind of chatbot should I be? Please write your answer and press Enter:")
+bot = ChatBot(run_locally=False, system_message=input())
 while True:
     setup_dir(tmpdir)
     recorder.record(tmpfile)
-    prompt = transcriber.transcribe(tmpfile, messages)
+    prompt = transcriber.transcribe(tmpfile, bot.messages)
     print(f"You: {prompt}")
     print('#' * 80)
-    messages.append({"role": "user", "content": prompt})
-    # TODO: Migrate to separate class (to which we can pass run_locally)
-    response = openai.ChatCompletion.create(model="gpt-4", messages=messages)["choices"][0]["message"]["content"]
-    messages.append({"role": "assistant", "content": response})
+    response = bot.respond(prompt)
     print(f"Bot: {response}")
+    print('#' * 80)
     speak(response, tmpfile)
