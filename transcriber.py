@@ -1,5 +1,7 @@
 import openai
 
+from chat_bot import ChatBot
+
 
 class Transcriber:
     def __init__(self, run_locally: bool):
@@ -29,11 +31,6 @@ class Transcriber:
         post_processing_system = "You are a helpful assistant. Your task is to correct any spelling discrepancies in " \
                                  "the transcribed text. Only add necessary punctuation such as periods, commas, and " \
                                  "capitalization, and use only the context provided."
-        post_processing_messages = (
-                [{"role": "system", "content": post_processing_system}]
-                + messages[1:]
-                + [{"role": "user", "content": raw_transcription}]
-        )
-        return openai.ChatCompletion.create(
-            model="gpt-4", messages=post_processing_messages
-        )["choices"][0]["message"]["content"]
+        chat_bot = ChatBot(system_message=post_processing_system, run_locally=self.run_locally)
+        chat_bot.messages = chat_bot.messages + messages[1:]
+        return chat_bot.respond(raw_transcription)
