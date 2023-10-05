@@ -2,7 +2,7 @@ import openai
 
 
 class ChatBot:
-    def __init__(self, run_locally, system_message: str):
+    def __init__(self, system_message: str, run_locally: bool):
         self.run_locally = run_locally
         self.messages = [{"role": "system", "content": system_message}]
 

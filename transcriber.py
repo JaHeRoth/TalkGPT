@@ -2,7 +2,7 @@ import openai
 
 
 class Transcriber:
-    def __init__(self, run_locally):
+    def __init__(self, run_locally: bool):
         self.run_locally = run_locally
 
     def transcribe(self, fpath, messages: list[dict]):

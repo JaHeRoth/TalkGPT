@@ -7,6 +7,7 @@ import soundfile as sf
 from gtts import gTTS
 
 from chat_bot import ChatBot
+from logger import Logger, Verbosity
 from recorder import Recorder
 from transcriber import Transcriber
 
@@ -34,22 +35,21 @@ def speak(text: str, fname):
     data, fs = sf.read(fname, dtype='float32')
     sd.play(data, fs)
     sd.wait()
-    print("Done speaking")
+    logger.log("Done speaking")
 
 
 tmpdir = Path(".tmp/")
 tmpfile = tmpdir / "audio.mp3"
-recorder = Recorder()
+logger = Logger(verbosity=Verbosity.NORMAL)
+recorder = Recorder(logger)
 transcriber = Transcriber(run_locally=False)
 print("What kind of chatbot should I be? Please write your answer and press Enter:")
-bot = ChatBot(run_locally=False, system_message=input())
+bot = ChatBot(system_message=input(), run_locally=False)
 while True:
     setup_dir(tmpdir)
     recorder.record(tmpfile)
     prompt = transcriber.transcribe(tmpfile, bot.messages)
-    print(f"You: {prompt}")
-    print('#' * 80)
+    logger.priority_log(f"You: {prompt}")
     response = bot.respond(prompt)
-    print(f"Bot: {response}")
-    print('#' * 80)
+    logger.priority_log(f"Bot: {response}")
     speak(response, tmpfile)
