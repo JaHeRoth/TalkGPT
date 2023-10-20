@@ -30,7 +30,7 @@ def setup_dir(dirpath: Path):
     dirpath.mkdir()
 
 
-def foo():
+def collect_response():
     print(f"Bot: ", end="", flush=True)
     for response_segment in bot.respond_stream(prompt):
         if len(response_segment) > 0:
@@ -57,7 +57,7 @@ while True:
     recorder.record(infile)
     prompt = transcriber.transcribe(infile, bot.messages)
     logger.priority_log(f"You: {prompt}")
-    worker = threading.Thread(target=foo)
+    worker = threading.Thread(target=collect_response)
     worker.start()
     while not done_responding.is_set() or len(to_be_spoken.queue) > 0:
         sd.play(*to_be_spoken.get())

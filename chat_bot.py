@@ -50,7 +50,7 @@ class ChatBot:
             segment.append(token)
             # TODO: Use exponentially increasing max and min lengths with check for punctuation, to minimize latency
             #  and the occurence of pauses in the middle of subsentences
-            if len(segment) >= 10:  # token in {"\n", ".", ",", ":", ";", "!", "?"}
+            if len(segment) >= 10:  # token in {"\n", ".", ",", ":", ";", "!", "?"} (or maybe string.punctuation)
                 segments.append("".join(segment))
                 segment = []
                 yield segments[-1]
